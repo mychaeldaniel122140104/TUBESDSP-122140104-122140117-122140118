@@ -3,5 +3,4 @@ mediapipe
 numpy
 scipy
 matplotlib
-tk
 Pillow
