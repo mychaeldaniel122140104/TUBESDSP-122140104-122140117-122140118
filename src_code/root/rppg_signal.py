@@ -107,8 +107,8 @@ class RPPGExtractor:
         right = lm[454]     # Sisi kanan dahi
 
         # ROI secara vertikal: sekitar dahi atas dan tengah
-        roi_top_y = int(center.y * h - 0.14 * h)
-        roi_bot_y = int(center.y * h - 0.02 * h)
+        roi_top_y = int(center.y * h - 0.16 * h)
+        roi_bot_y = int(center.y * h - 0.04 * h)
         roi_left_x = int(left.x * w)
         roi_right_x = int(right.x * w)
 
