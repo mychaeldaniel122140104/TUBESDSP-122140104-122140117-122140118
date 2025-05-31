@@ -238,7 +238,7 @@ def preprocess_signal(data, fs, signal_type="rPPG", apply_median=True, apply_sav
         
         # Step 2: Savitzky-Golay filter untuk smoothing
         if apply_savgol:
-            window_len = min(11, len(processed_data) // 3)
+            window_len = max(5, min(11, len(processed_data) // 3))
             if window_len % 2 == 0:
                 window_len -= 1
             if window_len >= 5:
@@ -385,6 +385,7 @@ def adaptive_filter_params(data, fs, signal_type="rPPG"):
     # Adjust median filter kernel based on noise level
     if signal_std > 0.05:
         params["median_kernel"] = 7  # Larger kernel for noisy signals
+        params["savgol_window"] = min(15, len(data) // 2)
     elif signal_std < 0.01:
         params["median_kernel"] = 3  # Smaller kernel for clean signals
     
