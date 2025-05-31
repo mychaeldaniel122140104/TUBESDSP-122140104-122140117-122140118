@@ -6,7 +6,7 @@ Digunakan untuk preprocessing sinyal rPPG dan respirasi:
 - Savitzky-Golay filter
 - Bandpass Butterworth
 
-Author: [Nama Tim]
+penanggung jawab code dan yang menjelaksan code: Fajrul Ramadhana Aqsa
 """
 
 from scipy.signal import butter, filtfilt, medfilt, savgol_filter
@@ -15,6 +15,18 @@ import warnings
 
 
 def butter_bandpass(lowcut, highcut, fs, order=5):
+    """
+    Membuat filter Butterworth bandpass.
+
+    Args:
+        lowcut (float): Frekuensi cutoff bawah (Hz)
+        highcut (float): Frekuensi cutoff atas (Hz)
+        fs (float): Frekuensi sampling (Hz)
+        order (int): Orde filter
+
+    Returns:
+        tuple: Koefisien filter (b, a)
+    """
     if lowcut <= 0 or highcut <= 0:
         raise ValueError("Cutoff frequencies must be positive")
     if lowcut >= highcut:
@@ -43,6 +55,19 @@ def butter_bandpass(lowcut, highcut, fs, order=5):
 
 
 def apply_bandpass_filter(data, lowcut, highcut, fs, order=5):
+    """
+    Terapkan filter bandpass Butterworth ke data sinyal.
+
+    Args:
+        data (array-like): Data sinyal
+        lowcut (float): Cutoff bawah
+        highcut (float): Cutoff atas
+        fs (float): Frekuensi sampling
+        order (int): Orde filter
+
+    Returns:
+        np.ndarray: Sinyal hasil filtering
+    """
     if data is None or len(data) < order * 2:
         raise ValueError("Data is None or too short for filtering")
 
@@ -59,6 +84,16 @@ def apply_bandpass_filter(data, lowcut, highcut, fs, order=5):
 
 
 def apply_median_filter(data, kernel_size=5):
+
+    """
+    Terapkan median filter ke data sinyal.
+    Args:
+        data (array-like): Data sinyal
+        kernel_size (int): Ukuran kernel median filter
+    Returns:
+        np.ndarray: Sinyal hasil median filtering
+
+    """
     if not isinstance(data, np.ndarray):
         data = np.array(data)
 
@@ -77,6 +112,17 @@ def apply_median_filter(data, kernel_size=5):
 
 
 def apply_savgol_filter(data, window_length=11, poly_order=3):
+    """
+     Terapkan Savitzky-Golay filter ke sinyal.
+
+    Args:
+        data (array-like): Sinyal input
+        window_length (int): Panjang jendela
+        poly_order (int): Orde polinomial
+
+    Returns:
+        np.ndarray: Sinyal hasil smoothing
+    """
     if not isinstance(data, np.ndarray):
         data = np.array(data)
 
@@ -99,6 +145,19 @@ def apply_savgol_filter(data, window_length=11, poly_order=3):
 
 
 def preprocess_signal(data, fs, signal_type="rPPG", apply_median=True, apply_savgol=True):
+    """
+    Pipeline preprocessing sinyal (median → savgol → bandpass)
+
+    Args:
+        data (array-like): Data sinyal input
+        fs (float): Frekuensi sampling
+        signal_type (str): "rPPG" atau "respirasi"
+        apply_median (bool): Aktifkan median filter
+        apply_savgol (bool): Aktifkan Savitzky-Golay
+
+    Returns:
+        np.ndarray: Sinyal hasil preprocessing
+    """
     if not isinstance(data, np.ndarray):
         data = np.array(data)
 
@@ -138,8 +197,10 @@ def preprocess_signal(data, fs, signal_type="rPPG", apply_median=True, apply_sav
 # === Convenience functions untuk GUI ===
 
 def filter_rppg_signal(data, fs=30):
+    """Sinyal preprocessing khusus rPPG."""
     return preprocess_signal(data, fs, signal_type="rPPG")
-
+    
 
 def filter_respiration_signal(data, fs=30):
+    """Sinyal preprocessing khusus respirasi."""
     return preprocess_signal(data, fs, signal_type="respirasi")
