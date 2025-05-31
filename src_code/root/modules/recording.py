@@ -1,5 +1,3 @@
-# modules/recording.py
-
 import os
 import time
 import threading
@@ -12,6 +10,15 @@ from modules.plotting import _plot_signal_subplot
 
 
 def start_30s_recording(app):
+    """
+    Memulai proses perekaman sinyal selama 30 detik.
+
+    Fungsi ini akan memeriksa apakah video feed aktif. Jika ya, maka akan menginisialisasi buffer
+    penyimpanan data sinyal dan memulai thread untuk menghitung mundur waktu rekaman.
+
+    Args:
+        app: Objek utama aplikasi yang memiliki atribut dan buffer sinyal.
+    """
     if not app.running:
         messagebox.showwarning("Warning", "Please start video feed first!")
         return
@@ -37,6 +44,15 @@ def start_30s_recording(app):
 
 
 def recording_countdown(app):
+    """
+    Mengatur hitung mundur selama 30 detik saat perekaman berlangsung.
+
+    Fungsi ini akan terus memperbarui label status waktu perekaman di antarmuka pengguna dan
+    memicu proses penyimpanan dan visualisasi saat perekaman selesai.
+
+    Args:
+        app: Objek utama aplikasi yang merekam data.
+    """
     start_time = time.time()
     while app.recording_30s and (time.time() - start_time) < 30:
         elapsed = int(time.time() - start_time)
@@ -50,6 +66,15 @@ def recording_countdown(app):
 
 
 def generate_30s_plots(app):
+    """
+    Menghasilkan grafik dan menyimpan data sinyal setelah 30 detik perekaman.
+
+    Fungsi ini menyimpan 4 plot sinyal (RGB, rPPG, respiras raw & filtered) dalam satu gambar,
+    dan juga menyimpan data numerik ke file teks.
+
+    Args:
+        app: Objek utama aplikasi dengan data perekaman.
+    """
     try:
         if not app.recording_data['timestamps']:
             messagebox.showwarning("Warning", "No data recorded!")
@@ -111,6 +136,17 @@ def generate_30s_plots(app):
 
 
 def save_data(app):
+    """
+    Menyimpan buffer sinyal rPPG dan respirasi saat ini ke file teks.
+
+    Fungsi ini digunakan saat pengguna ingin menyimpan sinyal secara manual, bukan dari rekaman 30 detik.
+
+    Args:
+        app: Objek utama aplikasi yang memiliki buffer sinyal.
+
+    Returns:
+        bool: True jika penyimpanan berhasil, False jika gagal.
+    """
     if not app.rppg_buffer and not app.respirasi_buffer:
         messagebox.showwarning("No Data", "No signal data to save. Please start monitoring first.")
         return False
