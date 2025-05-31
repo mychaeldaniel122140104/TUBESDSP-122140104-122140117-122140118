@@ -1,5 +1,6 @@
 # modules/layout.py
 
+# Membuat antarmuka pengguna untuk aplikasi pelacakan rPPG dan laju pernapasan secara real-time
 import tkinter as tk
 import tkinter.messagebox as messagebox
 from matplotlib import pyplot as plt
@@ -11,14 +12,15 @@ from modules.plotting import build_plot
 def init_layout(app):
     """
     Inisialisasi layout dan komponen GUI dengan tombol recording tambahan.
+    Membangun antarmuka pengguna untuk aplikasi pelacakan rPPG dan laju pernapasan secara real-time.
     """
     # Konfigurasi grid layout
     app.window.rowconfigure(1, weight=1)
-    app.window.columnconfigure(0, weight=3)
-    app.window.columnconfigure(1, weight=2)
+    app.window.columnconfigure(0, weight=3) # Panel video kiri 
+    app.window.columnconfigure(1, weight=2) # Panel video kanan
 
-    # Title
-    title = tk.Label(app.window, text="Realtime rPPG and Respiration Rate Tracker",
+    # Title 
+    title = tk.Label(app.window, text="Pemantauan Sinyal rPPG dan Respiration Rate Secara Real-Time",
                      font=("Helvetica", 16, "bold"), fg="cyan", bg="#2e2e2e")
     title.grid(row=0, column=0, columnspan=2, pady=10)
 
@@ -27,12 +29,12 @@ def init_layout(app):
     app.video_frame.grid(row=1, column=0, sticky="nsew", padx=10, pady=10)
     app.video_frame.rowconfigure(0, weight=1)
     app.video_frame.columnconfigure(0, weight=1)
-
+    # Label untuk menampilkan feed video
     app.video_label = tk.Label(app.video_frame, 
                               text="Tekan START untuk memulai feed kamera", 
                               fg="white", bg="black")
     app.video_label.grid(sticky="nsew")
-
+    # Label untuk menampilkan status video
     # Panel kanan untuk grafik
     app.right_panel = tk.Frame(app.window, bg="#1e1e1e")
     app.right_panel.grid(row=1, column=1, sticky="nsew", padx=10, pady=10)
@@ -55,7 +57,7 @@ def init_layout(app):
     # Tombol kontrol
     button_frame = tk.Frame(app.window, bg="#2e2e2e")
     button_frame.grid(row=2, column=0, columnspan=2, pady=10)
-
+    # Tombol kontrol untuk memulai, menghentikan, merekam, dan menyimpan data
     start_btn = tk.Button(button_frame, text="▶ START", command=lambda: start_video(app),
                           bg="lime green", fg="white", font=("Arial", 12, "bold"), width=12)
     start_btn.pack(side=tk.LEFT, padx=10)
