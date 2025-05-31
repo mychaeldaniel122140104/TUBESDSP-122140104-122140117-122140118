@@ -152,7 +152,7 @@ TUBESDSP/
 | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **1**     | Inisialisasi GitHub                                                                                                                                    | Membuat repository GitHub sebagai tempat penyimpanan dan kolaborasi kode proyek secara versi terkendali.                                                                                        |
 | **3**     | Pembuatan GUI awal dan eksplorasi filter sinyal                                                                                                        | Mendesain antarmuka pengguna (GUI) dan melakukan eksperimen dengan filter untuk sinyal rPPG dan Respirasi.                                                                 |
-| **4**     | <br>- Finalisasi desain GUI<br>- Refactor fungsi GUI<br>- Penyusunan laporan di Overleaf | Menggabungkan deteksi wajah dan bahu dengan model Blaze dan Pose Landmarker, menyempurnakan tampilan GUI, merapikan struktur fungsi GUI, serta mulai menyusun laporan akhir proyek di Overleaf. |
+| **4**     | - Finalisasi desain GUI<br>- Refactor fungsi GUI<br>- Penyusunan laporan di Overleaf | Melakukan prosesing dan visualisasi sinyal ,menyempurnakan tampilan GUI, merapikan struktur fungsi GUI, serta mulai menyusun laporan akhir proyek di Overleaf. |
 
 ## 🏁 Penutup
 
