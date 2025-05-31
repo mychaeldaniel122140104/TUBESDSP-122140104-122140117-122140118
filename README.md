@@ -106,27 +106,35 @@ python main.py
 ## 📁 Struktur Proyek
 
 ```
-Tubes-PengolahanSinyal/
+TUBESDSP/
 │
-├── main.py
-├── gui.py
-├── signal_filter.py
-├── rppg_signal.py
-├── respirasi_signal.py
+├── src_code/
+│   └── root/
+│       ├── main.py                       # Entry point aplikasi
+│       ├── app.py                        # Inisialisasi dan pemanggilan GUI
+│       ├── utils.py                      # Fungsi-fungsi utilitas umum
+│       ├── signal_filter.py              # Implementasi filtering (median, savgol, bandpass)
+│       ├── rppg_signal.py                # Ekstraksi sinyal rPPG (dahi)
+│       ├── respirasi_signal.py           # Ekstraksi sinyal respirasi (bahu)
 │
-├── modules/
-│   ├── plotting.py
-│   ├── layout.py
-│   ├── video_processing.py
-│   └── recording.py
+│       ├── core/                         # Paket internal (opsional: logika utama)
+│       │   └── __init__.py
 │
-├── output/
-│   ├── sinyal_data.txt
-│   ├── plot_hr.png
-│   └── plot_rr.png
+│       ├── modules/                      # Komponen modular (GUI dan logic)
+│       │   ├── layout.py                 # Layout antarmuka (Tkinter)
+│       │   ├── plotting.py               # Plotting matplotlib ke GUI
+│       │   ├── recording.py              # Fungsi simpan sinyal dan grafik
+│       │   ├── video_processing.py       # Proses kamera, ekstraksi frame & update sinyal
+│       │   └── __init__.py
 │
-├── requirements.txt
-└── README.md
+│       ├── saved_signals/               # Folder output data dan grafik
+│       │   ├── sinyal_data_*.txt
+│       │   ├── signal_analysis_*.png
+│
+├── .gitignore                           # Ignore file untuk Git
+├── README.md                            # Dokumentasi proyek
+├── requirements.txt                     # Dependensi Python
+
 ```
 
 ---
