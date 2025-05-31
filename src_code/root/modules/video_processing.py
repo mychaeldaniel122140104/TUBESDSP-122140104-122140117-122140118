@@ -1,5 +1,12 @@
 # modules/video_processing.py
 
+"""
+Penjelasan dan Pembuatan code Visualisasi dan Pengolahan Video : Mychael Daniel N
+Modul video_processing untuk mengelola aliran video dari webcam,
+proses ekstraksi sinyal rPPG dan respirasi secara real-time,
+serta pembaruan visualisasi dan penyimpanan data.
+"""
+
 import cv2
 import time
 import numpy as np
@@ -9,8 +16,11 @@ from tkinter import messagebox
 from signal_filter import apply_bandpass_filter
 from modules.plotting import update_hr_plot, update_rr_plot
 
-
 def start_video(app):
+    """
+    Menginisialisasi dan memulai pengambilan video dari webcam.
+    Mengatur resolusi, fps, serta mengatur ulang buffer dan status aplikasi.
+    """
     if not app.running:
         try:
             app.cap = cv2.VideoCapture(0)
@@ -40,8 +50,11 @@ def start_video(app):
                 app.cap.release()
                 app.cap = None
 
-
 def stop_video(app):
+    """
+    Menghentikan aliran video, melepaskan kamera,
+    dan mengatur ulang status serta label GUI.
+    """
     app.running = False
     app.recording_30s = False
     if app.cap:
@@ -54,8 +67,13 @@ def stop_video(app):
     )
     app.recording_status_text.set("Ready")
 
-
 def update_video(app):
+    """
+    Fungsi utama untuk membaca frame dari webcam,
+    melakukan deteksi landmark wajah dan bahu,
+    mengekstraksi sinyal rPPG dan respirasi,
+    memperbarui grafik sinyal, dan menyimpan data jika merekam.
+    """
     if app.running and app.cap:
         try:
             ret, frame = app.cap.read()
@@ -65,7 +83,7 @@ def update_video(app):
             frame = cv2.resize(frame, (640, 480))
             display_frame = frame.copy()
 
-            # rPPG processing
+            # === rPPG Processing ===
             raw_rgb_value = None
             try:
                 points = app.rppg_extractor.get_landmarks(frame)
@@ -87,7 +105,7 @@ def update_video(app):
             except Exception as e:
                 print(f"rPPG processing error: {e}")
 
-            # Respirasi processing
+            # === Respirasi Processing ===
             raw_respirasi_value = None
             try:
                 shoulders = app.respirasi_extractor.get_shoulders(frame)
@@ -101,6 +119,7 @@ def update_video(app):
             except Exception as e:
                 print(f"Respiration processing error: {e}")
 
+            # === Buffer Update ===
             try:
                 y_res = app.respirasi_extractor.extract(frame)
                 if y_res is not None:
@@ -119,6 +138,7 @@ def update_video(app):
             except Exception as e:
                 print(f"rPPG extraction error: {e}")
 
+            # === Perekaman Data (30s) ===
             if app.recording_30s:
                 current_time = time.time()
                 app.recording_data['timestamps'].append(current_time)
@@ -142,13 +162,14 @@ def update_video(app):
                     except Exception as e:
                         print(f"❌ Error in apply_bandpass_filter: {e}")
 
-
+            # === Tampilan Frame ke GUI ===
             frame_rgb = cv2.cvtColor(display_frame, cv2.COLOR_BGR2RGB)
             img = Image.fromarray(frame_rgb)
             imgtk = ImageTk.PhotoImage(image=img)
             app.video_label.imgtk = imgtk
             app.video_label.configure(image=imgtk)
 
+            # === Update Plot ===
             update_hr_plot(app)
             update_rr_plot(app)
 
