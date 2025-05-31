@@ -1,0 +1,436 @@
+\documentclass[11pt,a4paper]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%% Credit %%%%%%%%%%%%%%%%%%%%%%%%
+
+% template ini dibuat oleh martin.manullang@if.itera.ac.id untuk dipergunakan oleh seluruh sivitas akademik itera.
+
+%%%%%%%%%%%%%%%%%%%%%%%%% PACKAGE starts HERE %%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{microtype}
+\captionsetup[table]{name=Tabel}
+\captionsetup[figure]{name=Gambar}
+\usepackage{tabulary}
+% \usepackage{minted} % Dinonaktifkan untuk kompilasi lebih cepat
+\usepackage{amsmath}
+\usepackage{amsthm} 
+\usepackage{fancyhdr}
+\usepackage{amssymb}
+\usepackage{placeins} % Paket untuk \FloatBarrier
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage[all]{xy}
+\usepackage{tikz}
+\usepackage{verbatim}
+\usepackage[left=2cm,right=2cm,top=3cm,bottom=2.5cm]{geometry}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    linkcolor={red!50!black},
+    citecolor={blue!50!black},
+    urlcolor={blue!80!black}
+}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{psfrag}
+\usepackage[T1]{fontenc}
+\usepackage[scaled]{beramono}
+% Enable inserting code into the document
+\usepackage{listings}
+\usepackage{xcolor} 
+% custom color & style for listing
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\definecolor{LightGray}{gray}{0.9}
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{green},
+	keywordstyle=\color{codegreen},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,              
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+\lstset{style=mystyle}
+\renewcommand{\lstlistingname}{Kode}
+%%%%%%%%%%%%%%%%%%%%%%%%% PACKAGE ends HERE %%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%% Data Diri %%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\student}{\textbf{Mychael, Ichsan, Fajrul (122140104, 122140117, 122140118)}}
+\newcommand{\course}{\textbf{Pengolahan Sinyal Digital (IF3024)}}
+\newcommand{\assignment}{\textbf{Tugas Besar}}
+
+%%%%%%%%%%%%%%%%%%% using theorem style %%%%%%%%%%%%%%%%%%%%
+\newtheorem{thm}{Theorem}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{defn}[thm]{Definition} 
+\newtheorem{exa}[thm]{Example}
+\newtheorem{rem}[thm]{Remark}
+\newtheorem{coro}[thm]{Corollary}
+\newtheorem{quest}{Question}[section]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{lipsum}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{Kelompok: Mychael, Ichsan, Fajrul (122140104, 122140117, 122140118)} 
+\rhead{ \thepage}
+\cfoot{\textbf{Pemantauan Sinyal rPPG dan Respirasi Real-Time Berbasis Webcam}}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+%%%%%%%%%%%%%%  Shortcut for usual set of numbers  %%%%%%%%%%%
+
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\setlength\headheight{14pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%555
+\begin{document}
+\thispagestyle{empty}
+\begin{center}
+	\includegraphics[scale=0.15]{Figure/ifitera-header.png}
+	\vspace{0.1cm}
+\end{center}
+\noindent
+\rule{17cm}{0.2cm}\\[0.3cm]
+Nama: \student \hfill Tugas Ke: \assignment\\[0.1cm]
+Mata Kuliah: \course \hfill Tanggal: 31 Mei 2025\\
+Dosen Pengampu: Martin Clinton Tosima Manullang, S.T., M.T\\
+\rule{17cm}{0.05cm}
+\vspace{1cm}
+
+\begin{center}
+    {\Large \bf Laporan Tugas Besar} \\
+    \vspace{0.2cm}
+    {\bf Pemantauan Sinyal rPPG dan Respirasi Real-Time Berbasis Webcam}
+\end{center}
+\vspace{0.5cm}
+
+\tableofcontents
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BODY DOCUMENT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Pendahuluan}
+Proyek ini bertujuan untuk mengimplementasikan sebuah sistem pemantauan sinyal biologis non-kontak secara \textit{real-time}. Program yang dikembangkan mampu mengekstraksi dan menampilkan dua jenis sinyal vital dari input video webcam, yaitu sinyal pernapasan dan sinyal detak jantung (rPPG). Aplikasi ini dilengkapi dengan antarmuka pengguna grafis (GUI) yang interaktif untuk memvisualisasikan data dan hasil estimasi secara langsung.
+
+\section{Landasan Teori}
+Bagian ini menjelaskan dasar matematis dari dua teknik utama yang digunakan dalam pemrosesan sinyal pada proyek ini.
+
+\subsection{Filter Butterworth}
+Filter Butterworth adalah jenis filter \textit{Infinite Impulse Response} (IIR) yang memiliki karakteristik respons magnitudo yang sangat datar pada \textit{passband} \cite{proakis2007}. Karakteristik ini ideal untuk aplikasi biomedis di mana preservasi bentuk gelombang asli sangat penting. Respon magnitudo kuadrat dari filter Butterworth low-pass orde-$n$ didefinisikan sebagai berikut \cite{oppenheim2010}:
+\begin{equation}
+|H(j\omega)|^2 = \frac{1}{1 + \left(\frac{\omega}{\omega_c}\right)^{2n}}
+\end{equation}
+di mana $\omega_c$ adalah frekuensi cutoff dan $n$ adalah orde filter. Proyek ini menggunakan filter Butterworth tipe \textit{bandpass} untuk mengisolasi rentang frekuensi sinyal target.
+
+\subsection{Periodogram untuk Estimasi Spektrum Daya}
+Periodogram digunakan untuk mengestimasi \textit{Power Spectral Density} (PSD) dari sebuah sinyal, yang menggambarkan bagaimana daya sinyal terdistribusi pada berbagai frekuensi \cite{proakis2007}. Untuk sinyal waktu diskrit $x[k]$ dengan panjang $N$, Periodogram didefinisikan sebagai kuadrat magnitudo dari \textit{Discrete Fourier Transform} (DFT) sinyal tersebut:
+\begin{equation}
+P_{xx}(f) = \frac{1}{N} \left| \sum_{k=0}^{N-1} x[k] e^{-j2\pi fk} \right|^2
+\end{equation}
+Frekuensi yang sesuai dengan nilai puncak dari $P_{xx}(f)$ dianggap sebagai frekuensi fundamental dari sinyal.
+
+\section{Metodologi}
+Metodologi proyek ini menerapkan landasan teori yang ada ke dalam sebuah alur kerja praktis, mulai dari akuisisi data hingga ekstraksi informasi fisiologis.
+
+\subsection{Ekstraksi Sinyal Pernapasan}
+Sinyal pernapasan diekstraksi dengan melacak pergerakan vertikal bahu.
+\begin{itemize}
+    \item \textbf{Deteksi Landmark:} Menggunakan pustaka \texttt{MediaPipe Pose} \cite{bazarevsky2020}, program mendeteksi landmark untuk bahu kiri (\texttt{LEFT\_SHOULDER}) dan kanan (\texttt{RIGHT\_SHOULDER}).
+    \item \textbf{Generasi Sinyal Mentah:} Sinyal pernapasan mentah dihasilkan dengan menghitung rata-rata koordinat vertikal (koordinat Y) dari kedua bahu pada setiap frame video.
+\end{itemize}
+
+\subsection{Ekstraksi Sinyal Detak Jantung (rPPG)}
+Sinyal rPPG didasarkan pada prinsip penyerapan cahaya oleh hemoglobin dalam darah \cite{verkruysse2008}.
+\begin{itemize}
+    \item \textbf{Deteksi Wajah dan ROI:} Menggunakan \texttt{MediaPipe FaceMesh} \cite{kartynnik2019}, program mendeteksi 468 landmark wajah dan menentukan sebuah \textit{Region of Interest} (ROI) di area dahi.
+    \item \textbf{Generasi Sinyal Mentah:} Pada setiap frame, dihitung nilai rata-rata dari kanal warna hijau di dalam ROI. Kanal hijau dipilih karena sensitivitasnya yang tinggi terhadap perubahan volume darah \cite{verkruysse2008}.
+\end{itemize}
+
+\subsection{Rangkaian Pemrosesan dan Filtrasi Sinyal}
+Sinyal mentah yang diperoleh dari webcam umumnya mengandung derau dari berbagai sumber. Untuk mendapatkan sinyal yang bersih dan informatif, serangkaian proses filtrasi diterapkan sesuai dengan implementasi pada \texttt{signal\_filter.py}:
+\begin{enumerate}
+    \item \textbf{Median Filter:} Filter ini diterapkan pertama untuk menghilangkan noise impulsif atau lonjakan (spike) yang mungkin muncul pada sinyal akibat gangguan sesaat.
+    \item \textbf{Savitzky-Golay Filter:} Selanjutnya, filter Savitzky-Golay digunakan untuk melakukan penghalusan (smoothing) sinyal. Filter ini bekerja dengan mencocokkan potongan-potongan kecil data sinyal ke sebuah polinomial orde rendah, yang efektif mengurangi noise frekuensi tinggi sambil mempertahankan bentuk dan lebar puncak sinyal.
+    \item \textbf{Butterworth Bandpass Filter:} Tahap akhir filtrasi adalah filter Butterworth bandpass. Filter ini dirancang untuk melewatkan komponen frekuensi hanya dalam rentang yang spesifik dan relevan untuk masing-masing sinyal biologis, sekaligus menolak frekuensi di luar rentang tersebut (termasuk komponen DC dan noise frekuensi tinggi).
+    \begin{itemize}
+        \item Untuk sinyal rPPG (Detak Jantung): Rentang frekuensi yang dijaga adalah \textbf{0.7 Hz – 3.0 Hz} (setara dengan 42 – 180 BPM).
+        \item Untuk sinyal Respirasi: Rentang frekuensi yang dijaga adalah \textbf{0.1 Hz – 0.5 Hz} (setara dengan 6 – 30 napas per menit).
+    \end{itemize}
+\end{enumerate}
+Urutan filtrasi ini bertujuan untuk secara bertahap membersihkan dan mengkondisikan sinyal sebelum estimasi frekuensi.
+
+\subsection{Estimasi Laju Detak Jantung dan Pernapasan}
+Setelah sinyal difilter, estimasi laju dilakukan dengan menganalisis sinyal di domain frekuensi menggunakan metode Periodogram (seperti yang dijelaskan di Bab 2.2). Frekuensi yang memiliki daya tertinggi dalam rentang fisiologis yang valid dianggap sebagai frekuensi dominan dan dikonversi ke BPM atau napas per menit.
+
+\section{Implementasi Perangkat Lunak}
+Bab ini menjelaskan arsitektur perangkat lunak, pustaka yang digunakan, dan alur kerja aplikasi berdasarkan struktur kode yang telah dimodularisasi.
+
+\subsection{Pustaka dan Struktur Kode}
+Proyek ini dibangun menggunakan Python dengan pustaka utama yang tercantum dalam \texttt{requirements.txt}, meliputi \texttt{OpenCV} untuk manajemen video, \texttt{MediaPipe} untuk deteksi landmark, \texttt{SciPy} dan \texttt{NumPy} untuk pemrosesan sinyal, serta \texttt{Tkinter} dan \texttt{Matplotlib} untuk antarmuka pengguna grafis (GUI).
+
+Kode program telah diorganisir ke dalam struktur direktori yang modular, dengan direktori utama \texttt{src\_code/root/} berisi logika inti dan direktori \texttt{src\_code/modules/} berisi komponen-komponen pendukung GUI dan pemrosesan. File \texttt{main.py} dalam \texttt{src\_code/root/} berfungsi sebagai titik masuk utama yang akan menjalankan aplikasi. Kelas utama aplikasi, \texttt{RespirasiRPPGApp}, didefinisikan dalam \texttt{app.py} (di \texttt{src\_code/root/}) dan bertanggung jawab untuk inisialisasi GUI serta mengelola state aplikasi. Logika inti pemrosesan video frame-demi-frame, termasuk ekstraksi sinyal dan pembaruan GUI, ditangani oleh modul \texttt{video\_processing.py} yang berada di dalam direktori \texttt{modules}. Modul-modul lain di dalam \texttt{modules} seperti \texttt{layout.py}, \texttt{plotting.py}, dan \texttt{recording.py} mendukung fungsionalitas spesifik terkait tampilan dan interaksi pengguna. Sementara itu, logika untuk ekstraksi sinyal mentah (\texttt{rppg\_signal.py}, \texttt{respirasi\_signal.py}), filtrasi (\texttt{signal\_filter.py}), dan utilitas estimasi (\texttt{utils.py}) berada di direktori \texttt{root} sebagai komponen inti.
+
+\subsection{Alur Kerja Aplikasi}
+Dengan struktur yang baru, alur kerja aplikasi saat pengguna menekan tombol "START" dapat dijelaskan sebagai berikut:
+\begin{enumerate}
+    \item \texttt{main.py} dieksekusi, yang kemudian mengimpor dan membuat instance dari kelas \texttt{RespirasiRPPGApp} dari \texttt{app.py}.
+    \item Konstruktor (\texttt{\_\_init\_\_}) pada \texttt{app.py} menginisialisasi jendela utama Tkinter, variabel-variabel yang diperlukan (buffer, status, dll.), objek ekstraktor sinyal (\texttt{RPPGExtractor} dan \texttt{RespirasiExtractor}), dan memanggil fungsi dari \texttt{modules/layout.py} (diasumsikan) untuk membangun seluruh elemen visual GUI.
+    \item Ketika tombol "START" ditekan, fungsi \texttt{start\_video} dari \texttt{modules/video\_processing.py} dipanggil. Fungsi ini menginisialisasi penangkapan video menggunakan \texttt{OpenCV} dan memulai loop pemrosesan video.
+    \item Fungsi inti pemrosesan video, yaitu \texttt{update\_video} dalam \texttt{modules/video\_processing.py}, dipanggil secara rekursif (menggunakan \texttt{app.window.after}) untuk memproses setiap frame. Di dalam fungsi ini:
+    \begin{itemize}
+        \item Frame ditangkap dari webcam.
+        \item Frame dikirim ke metode \texttt{extract} dari objek \texttt{RPPGExtractor} (dari \texttt{rppg\_signal.py}) dan \texttt{RespirasiExtractor} (dari \texttt{respirasi\_signal.py}) untuk mendapatkan nilai sinyal mentah.
+        \item Sinyal mentah ditambahkan ke buffer yang ada di objek \texttt{app}.
+        \item Jika buffer sudah memiliki cukup data, data tersebut dikirim ke fungsi \texttt{preprocess\_signal} atau fungsi filtering terkait (dari \texttt{signal\_filter.py}).
+        \item Sinyal yang telah difilter kemudian dikirim ke fungsi \texttt{estimate\_heart\_rate} atau \texttt{estimate\_respiration\_rate} (dari \texttt{utils.py}) untuk mendapatkan estimasi laju.
+        \item Hasil estimasi dan sinyal terfilter digunakan untuk memperbarui plot pada GUI melalui fungsi-fungsi di \texttt{modules/plotting.py} (diasumsikan).
+    \end{itemize}
+    \item Proses ini berlanjut hingga tombol "STOP" ditekan, yang akan memanggil fungsi \texttt{stop\_video} dari \texttt{modules/video\_processing.py} untuk menghentikan loop dan melepaskan sumber daya kamera.
+\end{enumerate}
+
+\subsection{Kebutuhan Sistem}
+Untuk menjalankan aplikasi ini, dibutuhkan spesifikasi minimum sebagai berikut:
+\begin{itemize}
+    \item Python 3.10 atau versi lebih baru.
+    \item Webcam yang berfungsi (internal atau eksternal).
+    \item Sistem Operasi: Windows, Linux, atau macOS.
+\end{itemize}
+
+\subsection{Tinjauan Kode Fungsi Kunci}
+Berikut adalah penjelasan dari beberapa fungsi kunci yang menjadi inti dari aplikasi ini, dengan merujuk pada struktur file yang baru.
+
+\subsubsection{Inisialisasi Aplikasi dan Loop Utama}
+Kelas \texttt{RespirasiRPPGApp} dalam \texttt{app.py} mengatur seluruh komponen aplikasi. Konstruktornya menginisialisasi semua variabel penting dan membangun GUI dengan memanggil \texttt{init\_layout} (diasumsikan dari \texttt{modules/layout.py}).
+\begin{lstlisting}[language=Python, caption=Inisialisasi Aplikasi dari file \texttt{src\_code/root/app.py}, label={lst:app_init}]
+# Di dalam src_code/root/app.py
+class RespirasiRPPGApp:
+    def __init__(self):
+        self.hr_plot = None # Dan atribut plot lainnya
+        self.window = tk.Tk()
+        self.window.title("Realtime rPPG and Respiration Rate Tracker")
+        # ... (inisialisasi jendela, variabel, buffer) ...
+        try:
+            self.respirasi_extractor = RespirasiExtractor()
+            self.rppg_extractor = RPPGExtractor()
+        except Exception as e:
+            messagebox.showerror("Initialization Error", f"Failed to initialize extractors: {str(e)}")
+            return
+        # ... (inisialisasi buffer sinyal, variabel recording) ...
+        init_layout(self) # Memanggil layout builder dari modules/layout.py
+\end{lstlisting}
+Loop utama pemrosesan video ditangani oleh fungsi \texttt{update\_video} dalam \texttt{modules/video\_processing.py}. Fungsi ini secara terus-menerus mengambil frame, mengekstraksi sinyal, memfilter, mengestimasi, dan memperbarui GUI.
+\begin{lstlisting}[language=Python, caption=Loop Pemrosesan Video Inti dari \texttt{modules/video\_processing.py}, label={lst:update_video}]
+# Di dalam src_code/modules/video_processing.py
+def update_video(app):
+    if app.running and app.cap:
+        try:
+            ret, frame = app.cap.read()
+            if not ret:
+                raise Exception("Failed to read frame from camera")
+
+            # === rPPG Processing ===
+            green = app.rppg_extractor.extract(frame)
+            
+            # === Respirasi Processing ===
+            y_res = app.respirasi_extractor.extract(frame)
+            
+            # === Buffer Update ===
+            if green is not None:
+                app.rppg_buffer.append(green)
+                if len(app.rppg_buffer) > app.buffer_max: app.rppg_buffer.pop(0)
+            if y_res is not None:
+                app.respirasi_buffer.append(y_res)
+                if len(app.respirasi_buffer) > app.buffer_max: app.respirasi_buffer.pop(0)
+
+            # === Perekaman Data (30s) ===
+            # ... (logika penyimpanan data jika app.recording_30s aktif) ...
+            
+            # === Tampilan Frame ke GUI ===
+            # ... (konversi frame dan update app.video_label) ...
+            
+            # === Update Plot (memanggil fungsi dari modules/plotting.py atau langsung) ===
+            update_hr_plot(app) 
+            update_rr_plot(app) 
+
+        except Exception as e:
+            app.running = False
+
+    if app.running:
+        app.window.after(33, lambda: update_video(app))
+\end{lstlisting}
+Penjelasan: Fungsi \texttt{update\_video} adalah inti dari interaksi real-time. Ia mengambil objek \texttt{app} sebagai argumen untuk mengakses dan memodifikasi state aplikasi. Pemanggilan rekursif melalui \texttt{app.window.after} memastikan pemrosesan berjalan secara kontinu.
+
+\subsubsection{Ekstraksi Sinyal rPPG}
+Fungsi \texttt{extract} pada kelas \texttt{RPPGExtractor} (dari \texttt{src\_code/root/rppg\_signal.py}) bertanggung jawab untuk mengekstraksi nilai rata-rata kanal hijau dari ROI dahi.
+\begin{lstlisting}[language=Python, caption=Ekstraksi sinyal rPPG dari file \texttt{src\_code/root/rppg\_signal.py}, label={lst:rppg_extract_new}]
+# Di dalam src_code/root/rppg_signal.py
+def extract(self, frame):
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    results = self.face_mesh.process(frame_rgb)
+    if not results.multi_face_landmarks: return None
+    h, w, _ = frame.shape
+    lm = results.multi_face_landmarks[0].landmark
+    xs, ys = [], []
+    for idx in self.forehead_indices:
+        x = int(lm[idx].x * w)
+        y = int(lm[idx].y * h)
+        xs.append(x); ys.append(y)
+    x_min, x_max = max(min(xs),0), min(max(xs),w)
+    y_min, y_max = max(min(ys),0), min(max(ys),h)
+    roi = frame[y_min:y_max, x_min:x_max]
+    if roi.size == 0: return None
+    avg_color = np.mean(roi, axis=(0,1))
+    return avg_color[1] / 255.0
+\end{lstlisting}
+
+\subsubsection{Rangkaian Filtrasi Sinyal}
+Fungsi \texttt{preprocess\_signal} dari \texttt{src\_code/root/signal\_filter.py} adalah fungsi utama yang dipanggil untuk membersihkan sinyal mentah melalui beberapa tahap filter.
+\begin{lstlisting}[language=Python, caption=Pipeline preprocessing sinyal dari \texttt{src\_code/root/signal\_filter.py}, label={lst:preprocess_signal}]
+# Di dalam src_code/root/signal_filter.py
+def preprocess_signal(data, fs, signal_type="rPPG", apply_median=True, apply_savgol=True):
+    if not isinstance(data, np.ndarray):
+        data = np.array(data)
+    if data is None or len(data) < 30:
+        return data 
+
+    processed_data = data.copy()
+    try:
+        if apply_median:
+            processed_data = apply_median_filter(processed_data, kernel_size=5)
+        if apply_savgol:
+            window_len = max(5, min(11, len(processed_data) // 3))
+            if window_len % 2 == 0: window_len -= 1
+            if window_len >= 5:
+                processed_data = apply_savgol_filter(processed_data,
+                                                   window_length=window_len,
+                                                   poly_order=3)
+        
+        if signal_type.lower() == "rppg":
+            processed_data = apply_bandpass_filter(processed_data, 0.7, 3.0, fs)
+        elif signal_type.lower() == "respirasi":
+            processed_data = apply_bandpass_filter(processed_data, 0.1, 0.5, fs)
+        return processed_data
+    except Exception as e:
+        print(f"Preprocessing error: {e}. Returning original data.")
+        return data
+\end{lstlisting}
+Fungsi ini secara berurutan menerapkan filter median, Savitzky-Golay (jika diaktifkan), dan akhirnya filter Butterworth bandpass sesuai dengan jenis sinyalnya.
+
+\subsubsection{Estimasi Detak Jantung}
+Fungsi \texttt{estimate\_heart\_rate} dari \texttt{src\_code/root/utils.py} melakukan estimasi detak jantung dari sinyal terfilter menggunakan periodogram.
+\begin{lstlisting}[language=Python, caption=Estimasi detak jantung dari file \texttt{src\_code/root/utils.py}, label={lst:hr_estimate_new}]
+# Di dalam src_code/root/utils.py
+def estimate_heart_rate(signal, fs):
+    f, Pxx = periodogram(signal, fs)
+    f_range = (f >= 0.7) & (f <= 3.0)
+    if not np.any(f_range): return 0
+    peak_freq = f[f_range][np.argmax(Pxx[f_range])]
+    return int(peak_freq * 60)
+\end{lstlisting}
+Fungsi ini bekerja dengan pertama-tama menghitung Power Spectral Density (PSD) menggunakan \texttt{periodogram}. Kemudian, dibuat sebuah \texttt{f\_range} untuk membatasi pencarian hanya pada frekuensi yang masuk akal untuk detak jantung manusia (0.7 Hz hingga 3.0 Hz). \texttt{np.argmax(Pxx[f\_range])} menemukan indeks dari daya tertinggi dalam rentang tersebut. Frekuensi yang bersesuaian dengan puncak daya ini (\texttt{peak\_freq}) kemudian dikalikan 60 untuk mengubah satuannya dari Hz (siklus per detik) menjadi BPM (detak per menit).
+
+\section{Hasil dan Analisis}
+\subsection{Antarmuka Pengguna (GUI) Interaktif}
+Antarmuka Pengguna Grafis (GUI) aplikasi, seperti yang terlihat pada Gambar \ref{fig:gui_aplikasi}, dirancang dengan gaya gelap (\textit{dark mode}) yang responsif dan memberikan pengalaman pengguna yang intuitif. Pada sisi kiri, terdapat panel utama yang menampilkan feed video langsung dari webcam. Sisi kanan GUI didedikasikan untuk visualisasi sinyal secara \textit{real-time} melalui dua plot terpisah untuk detak jantung dan pernapasan. Di bagian bawah jendela aplikasi, terdapat tombol-tombol kontrol utama.
+
+\begin{figure}[htbp] 
+    \centering
+    \includegraphics[width=0.9\textwidth]{Figure/gui.png}
+    \caption{Tampilan Antarmuka Pengguna (GUI) Aplikasi.}
+    \label{fig:gui_aplikasi}
+\end{figure}
+
+\subsection{Fungsionalitas Penyimpanan Data}
+Aplikasi menyediakan dua mode untuk menyimpan data, yang sangat berguna untuk analisis offline dan validasi hasil.
+\begin{itemize}
+    \item \textbf{Simpan Cepat (Tombol `SIMPAN`):} Menyimpan data buffer sinyal (sekitar 10 detik terakhir).
+    \item \textbf{Rekaman 30 Detik (Tombol `RECORD 30s`):} Merekam data selama 30 detik penuh, termasuk sinyal mentah, sinyal terfilter, dan timestamp. Setelah selesai, aplikasi secara otomatis menghasilkan plot perbandingan dalam format \texttt{.png} seperti yang dicontohkan pada Gambar \ref{fig:grafik_30s} dan menyimpan data numerik ke file \texttt{.txt}.
+\end{itemize}
+
+\subsection{Hasil Pemantauan Sinyal}
+Bagian ini menunjukkan contoh penggunaan aplikasi secara langsung pada subjek. Pengujian dilakukan dalam kondisi ideal untuk memaksimalkan akurasi deteksi, yaitu dengan pencahayaan yang cukup dan subjek yang relatif diam menghadap kamera.
+
+Gambar \ref{fig:pemantauan_pengguna} menampilkan dua tangkapan layar dari sesi pemantauan. Gambar pertama (\ref{fig:pengguna1}) menunjukkan aplikasi mendeteksi detak jantung sekitar 72 BPM dan laju pernapasan 18 napas/menit. Terlihat dengan jelas kotak kuning ROI (Region of Interest) yang secara otomatis ditempatkan di area dahi subjek untuk ekstraksi sinyal rPPG, beserta titik-titik hijau yang menandakan landmark wajah yang digunakan. Selain itu, titik-titik biru pada area bahu menunjukkan deteksi landmark untuk sinyal pernapasan. Grafik di sisi kanan menampilkan bentuk gelombang sinyal rPPG (atas, berwarna magenta) dan sinyal pernapasan (bawah, berwarna cyan) yang telah difilter secara \textit{real-time}.
+
+Gambar \ref{fig:pengguna2} menunjukkan kondisi beberapa saat kemudian, di mana estimasi detak jantung adalah 66 BPM dan laju pernapasan 12 napas/menit. Perbedaan nilai estimasi ini wajar terjadi karena variabilitas alami dari sinyal fisiologis dan sensitivitas metode terhadap perubahan kecil pada subjek atau lingkungan. Kedua gambar ini mengilustrasikan kemampuan aplikasi untuk secara kontinu melacak landmark, mengekstraksi sinyal, dan memberikan estimasi laju secara visual dan numerik. Keberhasilan deteksi ROI dan landmark yang stabil, seperti yang ditunjukkan, merupakan prasyarat penting untuk akurasi ekstraksi sinyal.
+
+\begin{figure}[htbp]
+	\centering
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figure/pengguna1.png}
+		\caption{Pemantauan sinyal dengan estimasi 72 BPM dan 18 napas/menit.}
+		\label{fig:pengguna1}
+	\end{subfigure}
+	\hfill % Spasi antara gambar
+	\begin{subfigure}[b]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{Figure/pengguna2.png}
+		\caption{Pemantauan sinyal beberapa saat kemudian dengan estimasi 66 BPM dan 12 napas/menit.}
+		\label{fig:pengguna2}
+	\end{subfigure}
+	\caption{Contoh hasil pemantauan sinyal pada subjek pengguna pada dua waktu berbeda.}\label{fig:pemantauan_pengguna}
+\end{figure}
+
+\subsection{Analisis Kualitatif dan Batasan}
+\begin{figure}[htbp] 
+    \centering
+    \includegraphics[width=0.9\textwidth]{Figure/grafik_sinyal.jpg}
+    \caption{Contoh Plot Analisis Sinyal 30 Detik.}
+    \label{fig:grafik_30s}
+\end{figure}
+Secara kualitatif, aplikasi berhasil menunjukkan sinyal periodik untuk detak jantung dan pernapasan dalam kondisi ideal. Gambar \ref{fig:grafik_30s} menunjukkan contoh sinyal rPPG terfilter (kanan atas) dan pernapasan terfilter (kanan bawah) yang menampilkan osilasi periodik. Sinyal mentah (kiri atas dan kiri bawah) terlihat jauh lebih bising.
+
+Namun, akurasi metode ini dipengaruhi oleh faktor eksternal:
+\begin{itemize}
+    \item \textbf{Gerakan Subjek:} Dapat menimbulkan motion artifact.
+    \item \textbf{Kondisi Pencahayaan:} Dapat menurunkan kualitas sinyal rPPG.
+    \item \textbf{Kualitas Kamera:} Mempengaruhi kebisingan sinyal.
+\end{itemize}
+Untuk hasil terbaik, pengguna disarankan untuk tetap relatif diam dan berada di lingkungan dengan pencahayaan yang cukup dan stabil.
+
+\FloatBarrier 
+
+\section{Kesimpulan}
+Proyek ini berhasil mengimplementasikan sistem non-kontak untuk memantau laju detak jantung dan pernapasan menggunakan webcam standar. Dengan memanfaatkan teknik dari pengolahan sinyal digital, terutama rangkaian filter Median, Savitzky-Golay, dan Butterworth bandpass, serta analisis spektral menggunakan periodogram, program mampu mengekstraksi informasi fisiologis yang bermakna dari sinyal video yang bising. Antarmuka pengguna yang interaktif dan fungsionalitas penyimpanan data mendukung kemudahan penggunaan dan analisis lebih lanjut.
+
+\section{Referensi}
+\renewcommand{\refname}{}
+\bibliographystyle{IEEEtran}
+\bibliography{referensi}
+
+% --- BAGIAN LAMPIRAN ---
+\newpage 
+\appendix
+\section{Lampiran} % Mengubah judul menjadi satu bab utama Lampiran
+
+\begin{itemize}
+    \item \textbf{Tautan Video Demonstrasi:} \url{https://youtu.be/0mAjfjLR54w}
+\end{itemize}
+
+
+\begin{itemize}
+    \item \textbf{Tautan Bukti Bantuan AI:} \url{https://drive.google.com/drive/folders/1NLZuOKd4hD_8J0Wj6zFGVSoJ1z81RhXt?usp=sharing}
+\end{itemize}
+
+\begin{itemize}
+    \item \textbf{Tautan Projek Overleaf:} \url{https://www.overleaf.com/read/dznkcrwrkbrt#87a7ec}
+    \item\texttt{Kami juga menggunakan bantuan github copilot pada VSCode}
+\end{itemize}
+
+\end{document}
